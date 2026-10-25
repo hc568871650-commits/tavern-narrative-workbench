@@ -44,10 +44,17 @@
       "draft append"
     ],
     "unverified": [
-      "published GitHub URL",
       "first-run sample initialization",
       "mobile hardware"
     ],
-    "report": "INSTALL-VERIFICATION.md"
+    "report": "INSTALL-VERIFICATION.md",
+    "publicGitHubVerification": {
+      "date": "2026-10-26",
+      "repository": "https://github.com/hc568871650-commits/tavern-narrative-workbench",
+      "testedCommit": "ac90957a87c18ce7861df3f0c046533f12575faa",
+      "transport": "anonymous HTTPS GitHub via native SillyTavern install API in a fresh isolated data directory",
+      "verified": ["both repositories install", "10 served assets match Git commit", "no-change update endpoint"],
+      "scope": "Public installation and resource verification only; earlier UI and business acceptance limits remain."
+    }
   }
 }
