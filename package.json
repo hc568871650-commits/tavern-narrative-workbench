@@ -1,0 +1,10 @@
+{
+  "name": "tavern-narrative-workbench",
+  "version": "0.3.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "check-package": "node scripts/check-package.mjs"
+  }
+}

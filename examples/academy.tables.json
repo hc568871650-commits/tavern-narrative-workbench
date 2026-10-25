@@ -1,0 +1,112 @@
+{
+  "mate": {
+    "type": "chatSheets",
+    "version": 1
+  },
+  "sheet_visitors": {
+    "uid": "sheet_visitors",
+    "name": "访客记录",
+    "content": [
+      [
+        "row_id",
+        "姓名",
+        "地点",
+        "已知事实",
+        "联系渠道"
+      ],
+      [
+        "1",
+        "林舟",
+        "接待室",
+        "尚未得知仓库口令",
+        "值班电话"
+      ]
+    ],
+    "sourceData": {
+      "note": "隔离验证样例，不是正式世界卡",
+      "initNode": "",
+      "deleteNode": "",
+      "updateNode": "",
+      "insertNode": "",
+      "ddl": "CREATE TABLE visitors (row_id INTEGER PRIMARY KEY, \"姓名\" TEXT NOT NULL UNIQUE, \"地点\" TEXT, \"已知事实\" TEXT, \"联系渠道\" TEXT);"
+    },
+    "updateConfig": {
+      "uiSentinel": -1,
+      "contextDepth": -1,
+      "updateFrequency": -1,
+      "batchSize": -1,
+      "skipFloors": -1
+    },
+    "exportConfig": {
+      "enabled": false,
+      "splitByRow": false,
+      "entryName": "访客记录",
+      "entryType": "constant",
+      "keywords": "",
+      "preventRecursion": true,
+      "injectionTemplate": "",
+      "extraIndexEnabled": false,
+      "extraIndexColumns": [],
+      "extraIndexColumnModes": {},
+      "extraIndexInjectionTemplate": "",
+      "entryPlacement": {
+        "position": "at_depth_as_system",
+        "depth": 2,
+        "order": 10000
+      }
+    },
+    "orderNo": 0
+  },
+  "sheet_carrying": {
+    "uid": "sheet_carrying",
+    "name": "携带记录",
+    "content": [
+      [
+        "row_id",
+        "对象",
+        "携带者",
+        "可见范围"
+      ],
+      [
+        "1",
+        "铜钥匙",
+        "周宁",
+        "接待室内可见"
+      ]
+    ],
+    "sourceData": {
+      "note": "隔离验证样例，不是正式世界卡",
+      "initNode": "",
+      "deleteNode": "",
+      "updateNode": "",
+      "insertNode": "",
+      "ddl": "CREATE TABLE carrying (row_id INTEGER PRIMARY KEY, \"对象\" TEXT NOT NULL UNIQUE, \"携带者\" TEXT, \"可见范围\" TEXT);"
+    },
+    "updateConfig": {
+      "uiSentinel": -1,
+      "contextDepth": -1,
+      "updateFrequency": -1,
+      "batchSize": -1,
+      "skipFloors": -1
+    },
+    "exportConfig": {
+      "enabled": false,
+      "splitByRow": false,
+      "entryName": "携带记录",
+      "entryType": "constant",
+      "keywords": "",
+      "preventRecursion": true,
+      "injectionTemplate": "",
+      "extraIndexEnabled": false,
+      "extraIndexColumns": [],
+      "extraIndexColumnModes": {},
+      "extraIndexInjectionTemplate": "",
+      "entryPlacement": {
+        "position": "at_depth_as_system",
+        "depth": 2,
+        "order": 10000
+      }
+    },
+    "orderNo": 0
+  }
+}

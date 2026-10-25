@@ -1,0 +1,53 @@
+{
+  "integrationVersion": "0.3.1",
+  "client": {
+    "repository": "https://github.com/SillyTavern/SillyTavern",
+    "version": "1.19.0",
+    "commit": "06bde939fb1e9c4c8d8641d810f0a916b5bce127"
+  },
+  "backend": {
+    "repository": "https://github.com/AlbusKen/shujuku",
+    "commit": "0d9cc1a50417398f1e96834b6a3be684f94839f2",
+    "build": "node scripts/run-rollup.mjs extension --inlineDynamicImports",
+    "bundled": false,
+    "licenseStatus": "No explicit root LICENSE found in pinned checkout; independent interface integration only."
+  },
+  "requiredApi": [
+    "exportTableAsJson",
+    "exportTableSnapshotsAtMessages",
+    "registerTableUpdateCallback",
+    "unregisterTableUpdateCallback"
+  ],
+  "optionalApi": [
+    "openVisualizer",
+    "importTemplateFromData"
+  ],
+  "requiresTavernHelper": false,
+  "limitations": [
+    "No independent swipe state recovery",
+    "No full cross-plugin rollback",
+    "Validation rules are diagnostic; authoritative constraints belong to backend",
+    "No model acceptance or TauriTavern native acceptance",
+    "Group-chat branching and disk verification not supported"
+  ],
+  "gitInstallVerification": {
+    "date": "2026-10-26",
+    "transport": "local HTTP Git mirror via native SillyTavern install API",
+    "backendEntrypoint": "repository root index.js",
+    "verified": [
+      "install",
+      "asset integrity",
+      "no-change update endpoint",
+      "editor UI",
+      "config save",
+      "existing fixture read",
+      "draft append"
+    ],
+    "unverified": [
+      "published GitHub URL",
+      "first-run sample initialization",
+      "mobile hardware"
+    ],
+    "report": "INSTALL-VERIFICATION.md"
+  }
+}

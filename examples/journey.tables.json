@@ -1,0 +1,265 @@
+{
+  "mate": {
+    "type": "chatSheets",
+    "version": 1
+  },
+  "sheet_items": {
+    "uid": "sheet_items",
+    "name": "随身物品",
+    "content": [
+      [
+        "row_id",
+        "物品编号",
+        "名称",
+        "数量",
+        "持有者",
+        "用途"
+      ],
+      [
+        "1",
+        "I-01",
+        "绷带",
+        3,
+        "林舟",
+        "干净的布条，可用于简单包扎"
+      ],
+      [
+        "2",
+        "I-02",
+        "通行钥匙",
+        1,
+        "林舟",
+        "通往驿站后门的铜制钥匙"
+      ],
+      [
+        "3",
+        "I-03",
+        "通讯器",
+        1,
+        "林舟",
+        "用于联络熟悉频段的同伴"
+      ],
+      [
+        "4",
+        "I-04",
+        "饮用水",
+        0,
+        "林舟",
+        "当前已用尽"
+      ],
+      [
+        "5",
+        "I-05",
+        "他人的绷带",
+        99,
+        "周宁",
+        "不属于玩家的库存"
+      ]
+    ],
+    "sourceData": {
+      "note": "合成UI验证样例，不属于任何正式世界设定。",
+      "initNode": "",
+      "deleteNode": "",
+      "updateNode": "",
+      "insertNode": "",
+      "ddl": "CREATE TABLE inventory (row_id INTEGER PRIMARY KEY, \"物品编号\" TEXT NOT NULL UNIQUE, \"名称\" TEXT, \"数量\" INTEGER CHECK(\"数量\">=0), \"持有者\" TEXT, \"用途\" TEXT);"
+    },
+    "updateConfig": {
+      "uiSentinel": -1,
+      "contextDepth": -1,
+      "updateFrequency": -1,
+      "batchSize": -1,
+      "skipFloors": -1
+    },
+    "exportConfig": {
+      "enabled": false,
+      "splitByRow": false,
+      "entryName": "随身物品",
+      "entryType": "constant",
+      "keywords": "",
+      "preventRecursion": true,
+      "injectionTemplate": "",
+      "extraIndexEnabled": false,
+      "extraIndexColumns": [],
+      "extraIndexColumnModes": {},
+      "extraIndexInjectionTemplate": "",
+      "entryPlacement": {
+        "position": "at_depth_as_system",
+        "depth": 2,
+        "order": 10000
+      }
+    },
+    "orderNo": 0
+  },
+  "sheet_people": {
+    "uid": "sheet_people",
+    "name": "已知人物",
+    "content": [
+      [
+        "row_id",
+        "姓名",
+        "身份",
+        "位置"
+      ],
+      [
+        "1",
+        "周宁",
+        "夜班值守员",
+        "驿站前厅"
+      ],
+      [
+        "2",
+        "陈岚",
+        "同行旅人",
+        "壁炉旁"
+      ]
+    ],
+    "sourceData": {
+      "note": "合成UI验证样例，不属于任何正式世界设定。",
+      "initNode": "",
+      "deleteNode": "",
+      "updateNode": "",
+      "insertNode": "",
+      "ddl": "CREATE TABLE known_people (row_id INTEGER PRIMARY KEY, \"姓名\" TEXT NOT NULL UNIQUE, \"身份\" TEXT, \"位置\" TEXT);"
+    },
+    "updateConfig": {
+      "uiSentinel": -1,
+      "contextDepth": -1,
+      "updateFrequency": -1,
+      "batchSize": -1,
+      "skipFloors": -1
+    },
+    "exportConfig": {
+      "enabled": false,
+      "splitByRow": false,
+      "entryName": "已知人物",
+      "entryType": "constant",
+      "keywords": "",
+      "preventRecursion": true,
+      "injectionTemplate": "",
+      "extraIndexEnabled": false,
+      "extraIndexColumns": [],
+      "extraIndexColumnModes": {},
+      "extraIndexInjectionTemplate": "",
+      "entryPlacement": {
+        "position": "at_depth_as_system",
+        "depth": 2,
+        "order": 10000
+      }
+    },
+    "orderNo": 1
+  },
+  "sheet_tasks": {
+    "uid": "sheet_tasks",
+    "name": "当前任务",
+    "content": [
+      [
+        "row_id",
+        "名称",
+        "目标",
+        "进度"
+      ],
+      [
+        "1",
+        "找到补给",
+        "询问附近可补充饮水的地方",
+        "进行中"
+      ],
+      [
+        "2",
+        "修好通讯器",
+        "寻找备用电池",
+        "待开始"
+      ]
+    ],
+    "sourceData": {
+      "note": "合成UI验证样例，不属于任何正式世界设定。",
+      "initNode": "",
+      "deleteNode": "",
+      "updateNode": "",
+      "insertNode": "",
+      "ddl": "CREATE TABLE current_tasks (row_id INTEGER PRIMARY KEY, \"名称\" TEXT NOT NULL UNIQUE, \"目标\" TEXT, \"进度\" TEXT);"
+    },
+    "updateConfig": {
+      "uiSentinel": -1,
+      "contextDepth": -1,
+      "updateFrequency": -1,
+      "batchSize": -1,
+      "skipFloors": -1
+    },
+    "exportConfig": {
+      "enabled": false,
+      "splitByRow": false,
+      "entryName": "当前任务",
+      "entryType": "constant",
+      "keywords": "",
+      "preventRecursion": true,
+      "injectionTemplate": "",
+      "extraIndexEnabled": false,
+      "extraIndexColumns": [],
+      "extraIndexColumnModes": {},
+      "extraIndexInjectionTemplate": "",
+      "entryPlacement": {
+        "position": "at_depth_as_system",
+        "depth": 2,
+        "order": 10000
+      }
+    },
+    "orderNo": 2
+  },
+  "sheet_places": {
+    "uid": "sheet_places",
+    "name": "已知地点",
+    "content": [
+      [
+        "row_id",
+        "名称",
+        "描述"
+      ],
+      [
+        "1",
+        "驿站前厅",
+        "暖灯下的接待区，周宁正在值夜"
+      ],
+      [
+        "2",
+        "河畔码头",
+        "离驿站不远，但夜间道路状况未知"
+      ]
+    ],
+    "sourceData": {
+      "note": "合成UI验证样例，不属于任何正式世界设定。",
+      "initNode": "",
+      "deleteNode": "",
+      "updateNode": "",
+      "insertNode": "",
+      "ddl": "CREATE TABLE known_places (row_id INTEGER PRIMARY KEY, \"名称\" TEXT NOT NULL UNIQUE, \"描述\" TEXT);"
+    },
+    "updateConfig": {
+      "uiSentinel": -1,
+      "contextDepth": -1,
+      "updateFrequency": -1,
+      "batchSize": -1,
+      "skipFloors": -1
+    },
+    "exportConfig": {
+      "enabled": false,
+      "splitByRow": false,
+      "entryName": "已知地点",
+      "entryType": "constant",
+      "keywords": "",
+      "preventRecursion": true,
+      "injectionTemplate": "",
+      "extraIndexEnabled": false,
+      "extraIndexColumns": [],
+      "extraIndexColumnModes": {},
+      "extraIndexInjectionTemplate": "",
+      "entryPlacement": {
+        "position": "at_depth_as_system",
+        "depth": 2,
+        "order": 10000
+      }
+    },
+    "orderNo": 3
+  }
+}

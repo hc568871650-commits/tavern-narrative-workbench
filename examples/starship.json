@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "backend": "shujuku",
+  "id": "starship-resource-demo",
+  "name": "星际勘探 · 船舶与补给",
+  "modules": [
+    { "id": "ship", "label": "航行资源", "enabled": true },
+    { "id": "mission", "label": "任务", "enabled": true }
+  ],
+  "entities": [
+    {
+      "id": "ship", "label": "飞船", "module": "ship",
+      "sheet": { "name": "船舶状态" }, "keyColumn": "船名",
+      "fields": [
+        { "id": "fuel", "column": "燃料", "label": "推进燃料", "type": "number", "unit": " t", "group": "资源", "min": 0, "max": 100, "required": true },
+        { "id": "oxygen", "column": "氧气", "label": "氧气储量", "type": "number", "unit": " h", "group": "资源", "min": 0, "required": true },
+        { "id": "sector", "column": "星区", "label": "当前星区", "type": "text", "group": "航行" }
+      ]
+    },
+    {
+      "id": "mission", "label": "任务", "module": "mission",
+      "sheet": { "name": "勘探任务" }, "keyColumn": "任务编号",
+      "fields": [
+        { "id": "target", "column": "目标", "label": "勘探目标", "type": "text" },
+        { "id": "stage", "column": "状态", "label": "进度", "type": "text", "enum": ["待开始", "进行中", "完成"] }
+      ]
+    }
+  ]
+}

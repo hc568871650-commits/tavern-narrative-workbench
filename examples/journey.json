@@ -1,0 +1,200 @@
+{
+  "version": 1,
+  "backend": "shujuku",
+  "id": "journey-ui-demo",
+  "name": "夜行驿站 · 交互样例",
+  "modules": [
+    {
+      "id": "inventory",
+      "label": "随身物品",
+      "enabled": true
+    },
+    {
+      "id": "people",
+      "label": "人物",
+      "enabled": true
+    },
+    {
+      "id": "tasks",
+      "label": "任务",
+      "enabled": true
+    },
+    {
+      "id": "places",
+      "label": "地点",
+      "enabled": true
+    }
+  ],
+  "entities": [
+    {
+      "id": "inventory",
+      "label": "随身物品",
+      "module": "inventory",
+      "sheet": {
+        "name": "随身物品"
+      },
+      "keyColumn": "物品编号",
+      "fields": [
+        {
+          "id": "name",
+          "column": "名称",
+          "label": "名称",
+          "type": "text"
+        },
+        {
+          "id": "quantity",
+          "column": "数量",
+          "label": "数量",
+          "type": "number",
+          "min": 0,
+          "required": true
+        },
+        {
+          "id": "owner",
+          "column": "持有者",
+          "label": "持有者",
+          "type": "text"
+        },
+        {
+          "id": "description",
+          "column": "用途",
+          "label": "用途",
+          "type": "text"
+        }
+      ],
+      "ui": {
+        "kind": "items",
+        "titleField": "name",
+        "quantityField": "quantity",
+        "descriptionField": "description",
+        "filter": {
+          "field": "owner",
+          "equals": "林舟"
+        },
+        "actions": [
+          {
+            "id": "use",
+            "label": "使用",
+            "quantity": true,
+            "target": true,
+            "template": "我尝试使用 {quantity} 份「{name}」，对象是{target}。"
+          },
+          {
+            "id": "give",
+            "label": "交给…",
+            "quantity": true,
+            "target": true,
+            "template": "我准备把 {quantity} 份「{name}」交给{target}。"
+          },
+          {
+            "id": "inspect",
+            "label": "查看",
+            "template": "我仔细查看「{name}」的状态与用途。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "people",
+      "label": "人物",
+      "module": "people",
+      "sheet": {
+        "name": "已知人物"
+      },
+      "keyColumn": "姓名",
+      "fields": [
+        {
+          "id": "role",
+          "column": "身份",
+          "label": "身份",
+          "type": "text"
+        },
+        {
+          "id": "location",
+          "column": "位置",
+          "label": "位置",
+          "type": "text"
+        }
+      ],
+      "ui": {
+        "kind": "people",
+        "descriptionField": "role",
+        "actions": [
+          {
+            "id": "talk",
+            "label": "交谈",
+            "template": "我走近{name}，准备和对方交谈。"
+          },
+          {
+            "id": "ask",
+            "label": "询问",
+            "target": true,
+            "template": "我向{name}询问关于「{target}」的事。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "tasks",
+      "label": "任务",
+      "module": "tasks",
+      "sheet": {
+        "name": "当前任务"
+      },
+      "keyColumn": "名称",
+      "fields": [
+        {
+          "id": "description",
+          "column": "目标",
+          "label": "目标",
+          "type": "text"
+        },
+        {
+          "id": "stage",
+          "column": "进度",
+          "label": "进度",
+          "type": "text"
+        }
+      ],
+      "ui": {
+        "kind": "tasks",
+        "descriptionField": "description",
+        "actions": [
+          {
+            "id": "pursue",
+            "label": "准备推进",
+            "template": "我准备着手推进「{name}」，先确认目前可以采取的行动。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "places",
+      "label": "地点",
+      "module": "places",
+      "sheet": {
+        "name": "已知地点"
+      },
+      "keyColumn": "名称",
+      "fields": [
+        {
+          "id": "description",
+          "column": "描述",
+          "label": "描述",
+          "type": "text"
+        }
+      ],
+      "ui": {
+        "kind": "places",
+        "descriptionField": "description",
+        "actions": [
+          {
+            "id": "visit",
+            "label": "前往",
+            "template": "我打算前往{name}，先观察路途是否可行。"
+          }
+        ]
+      }
+    }
+  ]
+}

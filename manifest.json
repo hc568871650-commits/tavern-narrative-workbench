@@ -1,0 +1,15 @@
+{
+  "display_name": "叙事工作台 · 预览版",
+  "loading_order": 210,
+  "requires": [],
+  "optional": [],
+  "js": "index.js",
+  "css": "style.css",
+  "author": "Narrative Workbench",
+  "dependencies": [
+    "third-party/shujuku"
+  ],
+  "version": "0.3.1",
+  "auto_update": false,
+  "homePage": "https://github.com/hc568871650-commits/tavern-narrative-workbench"
+}

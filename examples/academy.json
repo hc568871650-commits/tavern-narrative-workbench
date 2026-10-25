@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "backend": "shujuku",
+  "id": "academy-visitor-demo",
+  "name": "学院访客 · 非正典适配样例",
+  "modules": [
+    { "id": "people", "label": "人物与知情", "enabled": true },
+    { "id": "relations", "label": "携带关系", "enabled": true }
+  ],
+  "entities": [
+    {
+      "id": "people", "label": "人物", "module": "people",
+      "sheet": { "name": "访客记录" }, "keyColumn": "姓名",
+      "fields": [
+        { "id": "location", "column": "地点", "label": "所在地点", "type": "text", "group": "现场", "required": true },
+        { "id": "known", "column": "已知事实", "label": "本人已知", "type": "text", "group": "知情范围" },
+        { "id": "contact", "column": "联系渠道", "label": "外部联系", "type": "text", "group": "联系" }
+      ]
+    },
+    {
+      "id": "carrying", "label": "携带关系", "module": "relations",
+      "sheet": { "name": "携带记录" }, "keyColumn": "对象",
+      "fields": [
+        { "id": "holder", "column": "携带者", "label": "当前携带者", "type": "text", "required": true },
+        { "id": "visibility", "column": "可见范围", "label": "可见范围", "type": "text" }
+      ]
+    }
+  ]
+}

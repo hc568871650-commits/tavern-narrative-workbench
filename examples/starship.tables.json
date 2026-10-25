@@ -1,0 +1,112 @@
+{
+  "mate": {
+    "type": "chatSheets",
+    "version": 1
+  },
+  "sheet_ship": {
+    "uid": "sheet_ship",
+    "name": "船舶状态",
+    "content": [
+      [
+        "row_id",
+        "船名",
+        "燃料",
+        "氧气",
+        "星区"
+      ],
+      [
+        "1",
+        "远望号",
+        80,
+        48,
+        "栖霞星区"
+      ]
+    ],
+    "sourceData": {
+      "note": "隔离验证样例，不是正式世界卡",
+      "initNode": "",
+      "deleteNode": "",
+      "updateNode": "",
+      "insertNode": "",
+      "ddl": "CREATE TABLE ships (row_id INTEGER PRIMARY KEY, \"船名\" TEXT NOT NULL UNIQUE, \"燃料\" REAL CHECK(\"燃料\" >= 0 AND \"燃料\" <= 100), \"氧气\" REAL CHECK(\"氧气\" >= 0), \"星区\" TEXT);"
+    },
+    "updateConfig": {
+      "uiSentinel": -1,
+      "contextDepth": -1,
+      "updateFrequency": -1,
+      "batchSize": -1,
+      "skipFloors": -1
+    },
+    "exportConfig": {
+      "enabled": false,
+      "splitByRow": false,
+      "entryName": "船舶状态",
+      "entryType": "constant",
+      "keywords": "",
+      "preventRecursion": true,
+      "injectionTemplate": "",
+      "extraIndexEnabled": false,
+      "extraIndexColumns": [],
+      "extraIndexColumnModes": {},
+      "extraIndexInjectionTemplate": "",
+      "entryPlacement": {
+        "position": "at_depth_as_system",
+        "depth": 2,
+        "order": 10000
+      }
+    },
+    "orderNo": 0
+  },
+  "sheet_mission": {
+    "uid": "sheet_mission",
+    "name": "勘探任务",
+    "content": [
+      [
+        "row_id",
+        "任务编号",
+        "目标",
+        "状态"
+      ],
+      [
+        "1",
+        "M-01",
+        "探测卫星",
+        "待开始"
+      ]
+    ],
+    "sourceData": {
+      "note": "隔离验证样例，不是正式世界卡",
+      "initNode": "",
+      "deleteNode": "",
+      "updateNode": "",
+      "insertNode": "",
+      "ddl": "CREATE TABLE missions (row_id INTEGER PRIMARY KEY, \"任务编号\" TEXT NOT NULL UNIQUE, \"目标\" TEXT, \"状态\" TEXT CHECK(\"状态\" IN ('待开始','进行中','完成')));"
+    },
+    "updateConfig": {
+      "uiSentinel": -1,
+      "contextDepth": -1,
+      "updateFrequency": -1,
+      "batchSize": -1,
+      "skipFloors": -1
+    },
+    "exportConfig": {
+      "enabled": false,
+      "splitByRow": false,
+      "entryName": "勘探任务",
+      "entryType": "constant",
+      "keywords": "",
+      "preventRecursion": true,
+      "injectionTemplate": "",
+      "extraIndexEnabled": false,
+      "extraIndexColumns": [],
+      "extraIndexColumnModes": {},
+      "extraIndexInjectionTemplate": "",
+      "entryPlacement": {
+        "position": "at_depth_as_system",
+        "depth": 2,
+        "order": 10000
+      }
+    },
+    "orderNo": 0
+  }
+}
