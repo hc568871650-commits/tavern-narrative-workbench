@@ -83,7 +83,6 @@
       "portable export round trip"
     ],
     "notVerified": [
-      "v0.4 public GitHub install",
       "complete responsive UI",
       "physical mobile keyboard",
       "Tauri",
@@ -97,6 +96,45 @@
       "assetBytesMatch": true,
       "noChangeUpdate": true,
       "publicGitHub": false
+    },
+    "publicGitHubVerification": {
+      "date": "2026-10-26",
+      "testedCodeCommit": "3bdee3f12eb2716736453a6f4c881616adf7b106",
+      "hostCommit": "06bde939fb1e9c4c8d8641d810f0a916b5bce127",
+      "dependencyCommit": "0d9cc1a50417398f1e96834b6a3be684f94839f2",
+      "transport": "anonymous HTTPS GitHub via native SillyTavern install and update API in two isolated data roots",
+      "servedAssetCount": 15,
+      "assetBytesMatch": true,
+      "noChangeUpdate": true,
+      "upgradeFrom": "0.3.1",
+      "upgradeFromCommit": "24832880a5618538190521e07ea58fa3be3832f8",
+      "controlledChatAndAdaptationPreserved": true,
+      "upgradeDraftUI": true,
+      "scope": "Controlled old sample through host API, then real browser read and draft append; not a production-save migration guarantee."
+    },
+    "releaseUI": {
+      "date": "2026-10-26",
+      "verified": [
+        "Real UI sample adaptation save, async confirmation, initialization complete with table data",
+        "Portable two-person pack import preview, cancel, re-import and merge with host readback success",
+        "Unsaved description: continue editing retains draft; abandon restores saved description",
+        "Desktop sidebar person switch from Zhou Ning to Chen Lan and portrait/description update",
+        "Page reload, reopen chat, both portraits and original saved description restored",
+        "People list thumbnails and selected person detail portrait",
+        "Basic person-detail layout at 390x844 and 320x568; 320px scroll reaches draft button",
+        "768x500 low-height person-detail layout and 1440x900 desktop sidebar",
+        "Historical floor 0 async branch confirmation, new branch open, table replay consistency message"
+      ],
+      "remaining": [
+        "Long roster and maximum-length descriptions",
+        "Full responsive matrix for all panels",
+        "Cross-card editing race protection in browser",
+        "Partial-success failure UI and late-arriving roster regression",
+        "Physical mobile keyboard",
+        "Tauri",
+        "Real model gameplay",
+        "Long-load and complex plugins"
+      ]
     }
   }
 }
