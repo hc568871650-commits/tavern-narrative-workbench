@@ -1,3 +1,4 @@
+@import "./portrait-panel.css";
 @import url("./dock.css");
 #nw-open{position:fixed;bottom:20px;left:18px;z-index:2000;padding:9px 16px;border:1px solid #7dafa3;border-radius:12px;background:#172722;color:#edf7f2;cursor:pointer;font-size:14px}
 #narrative-workbench{position:fixed;z-index:3000;right:16px;top:55px;bottom:24px;width:min(560px,calc(100vw - 32px));overflow:auto;background:#15201f;color:#e2eeea;border:1px solid #4f6e65;border-radius:16px;box-shadow:0 16px 70px #0009;padding:20px;font:14px/1.55 system-ui,sans-serif;text-align:left}

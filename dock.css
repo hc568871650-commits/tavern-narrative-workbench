@@ -137,3 +137,21 @@ body:not(.nw-player) #nw-play-header{background:#20242c;border-radius:10px}
 #nw-dock .nw-action-fields label:only-child{grid-column:1/-1}
 @media(max-width:420px){body.nw-player #top-settings-holder .drawer-icon{font-size:clamp(20px,6.8vw,26px)}}
 #nw-dock .nw-dock-tabs{scrollbar-color:#50505c transparent}@media(max-width:420px){#nw-dock .nw-dock-tabs button{font-size:12px;padding:5px 6px;min-height:32px}}
+
+/* v0.4: card-scoped portraits, people selection and searchable records. */
+#nw-play-sidebar>select{width:100%;min-height:40px;padding:7px 10px;border:1px solid #ffffff24;border-radius:8px;background:#20232b;color:#e7e7ef;margin-bottom:12px;font-size:14px}
+#nw-play-sidebar .nw-character-mark{padding:0;overflow:hidden;min-height:160px;aspect-ratio:4/5;max-height:36dvh;position:relative}
+#nw-play-sidebar .nw-character-mark img,#nw-dock .nw-character-mark img{display:block;width:100%;height:100%;min-height:0;border:0}
+#nw-play-sidebar .nw-character-mark>span{margin:auto}#nw-play-sidebar .nw-character-mark>small{padding-bottom:16px}
+#nw-dock .nw-avatar-thumb{width:42px;height:52px;flex:0 0 42px;border-radius:8px;overflow:hidden;display:grid;place-items:center;background:#25303d;color:#b9d9ed}
+#nw-dock .nw-avatar-thumb img{width:100%;height:100%;object-fit:cover}
+#nw-dock .nw-character-mark{height:240px;max-height:30dvh;border-radius:10px;overflow:hidden;background:#242b35;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 0 12px;gap:6px}
+#nw-dock .nw-character-mark>span{font-size:44px}#nw-dock .nw-character-mark>small{font-size:11px;color:#9ba8b6}
+#nw-dock .nw-search{width:100%;box-sizing:border-box;min-height:42px;border:1px solid var(--nw-line);border-radius:8px;background:#171b22;color:var(--nw-text);padding:8px 12px;font-size:14px;margin:0 0 14px}
+#nw-dock .nw-search[hidden]{display:none}
+#nw-dock .nw-public-note,#nw-play-sidebar .nw-public-note{color:#aeb9c8;font-size:13px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}
+#nw-play-sidebar .nw-portrait-edit,#nw-dock .nw-portrait-edit{font-size:12px;color:#9dc9dc;min-height:36px;background:transparent;border:1px solid #ffffff20;margin-top:6px}
+#nw-play-sidebar .nw-recent-changes{border-top:1px solid #ffffff15;margin-top:18px;padding-top:12px}
+#nw-play-sidebar .nw-recent-changes p{font-size:12px;line-height:1.65;color:#bdc6d5;overflow-wrap:anywhere}
+#nw-play-header>div{max-width:244px}
+@media(max-width:600px){#nw-play-header>div{max-width:156px}#nw-play-header button{min-height:34px;padding:5px 7px;font-size:11px}#nw-dock .nw-character-mark{height:220px;max-height:32dvh}#nw-dock .nw-search{font-size:16px}}

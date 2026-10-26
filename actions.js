@@ -51,3 +51,12 @@ export function appendDraft(existing, actionText) {
     // Never interpret slash commands, clear text, send a message, or modify database values.
     return existing + (existing && !existing.endsWith('\n') ? '\n' : '') + actionText;
 }
+// A player-facing summary must not reveal rows excluded by entity visibility filters.
+// Removed rows have no current visibility proof, so omit them conservatively.
+export function visibleChanges(changes, catalog) {
+    const allowed=new Set(catalog.flatMap(group=>group.rows.map(row=>row.id)));
+    return changes.filter(change=>{
+        try{const [entity,key]=JSON.parse(change.id);return allowed.has(JSON.stringify([entity,key]));}
+        catch{return false;}
+    });
+}

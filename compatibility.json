@@ -1,5 +1,5 @@
 {
-  "integrationVersion": "0.3.1",
+  "integrationVersion": "0.4.0",
   "client": {
     "repository": "https://github.com/SillyTavern/SillyTavern",
     "version": "1.19.0",
@@ -30,31 +30,73 @@
     "No model acceptance or TauriTavern native acceptance",
     "Group-chat branching and disk verification not supported"
   ],
-  "gitInstallVerification": {
+  "previousReleaseInstallVerification": {
+    "version": "0.3.1",
+    "record": {
+      "date": "2026-10-26",
+      "transport": "local HTTP Git mirror via native SillyTavern install API",
+      "backendEntrypoint": "repository root index.js",
+      "verified": [
+        "install",
+        "asset integrity",
+        "no-change update endpoint",
+        "editor UI",
+        "config save",
+        "existing fixture read",
+        "draft append"
+      ],
+      "unverified": [
+        "first-run sample initialization",
+        "mobile hardware"
+      ],
+      "report": "INSTALL-VERIFICATION.md",
+      "publicGitHubVerification": {
+        "date": "2026-10-26",
+        "repository": "https://github.com/hc568871650-commits/tavern-narrative-workbench",
+        "testedCommit": "ac90957a87c18ce7861df3f0c046533f12575faa",
+        "transport": "anonymous HTTPS GitHub via native SillyTavern install API in a fresh isolated data directory",
+        "verified": [
+          "both repositories install",
+          "10 served assets match Git commit",
+          "no-change update endpoint"
+        ],
+        "scope": "Public installation and resource verification only; earlier UI and business acceptance limits remain."
+      }
+    }
+  },
+  "verificationV04": {
     "date": "2026-10-26",
-    "transport": "local HTTP Git mirror via native SillyTavern install API",
     "backendEntrypoint": "repository root index.js",
-    "verified": [
-      "install",
-      "asset integrity",
-      "no-change update endpoint",
-      "editor UI",
-      "config save",
-      "existing fixture read",
-      "draft append"
+    "automatedTests": 118,
+    "hostUI": [
+      "first sample initialization",
+      "history frame and disk verification",
+      "reopen initialized chat",
+      "two portrait uploads and saves",
+      "public descriptions and fit selection",
+      "portable pack download"
     ],
-    "unverified": [
-      "first-run sample initialization",
-      "mobile hardware"
+    "hostAPI": [
+      "portable pack import to second card",
+      "uploaded image byte equality",
+      "card isolation",
+      "portable export round trip"
+    ],
+    "notVerified": [
+      "v0.4 public GitHub install",
+      "complete responsive UI",
+      "physical mobile keyboard",
+      "Tauri",
+      "model-driven local gameplay",
+      "Plotti save/reload end to end"
     ],
     "report": "INSTALL-VERIFICATION.md",
-    "publicGitHubVerification": {
-      "date": "2026-10-26",
-      "repository": "https://github.com/hc568871650-commits/tavern-narrative-workbench",
-      "testedCommit": "ac90957a87c18ce7861df3f0c046533f12575faa",
-      "transport": "anonymous HTTPS GitHub via native SillyTavern install API in a fresh isolated data directory",
-      "verified": ["both repositories install", "10 served assets match Git commit", "no-change update endpoint"],
-      "scope": "Public installation and resource verification only; earlier UI and business acceptance limits remain."
+    "localGitInstall": {
+      "transport": "native install API using local HTTP Git",
+      "servedAssetCount": 15,
+      "assetBytesMatch": true,
+      "noChangeUpdate": true,
+      "publicGitHub": false
     }
   }
 }

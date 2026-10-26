@@ -1,69 +1,53 @@
-# 发布到 GitHub：让酒馆粘贴链接安装
+# 0.4.0 发布说明
 
-## 1. 上传哪个目录
+本目录为叙事工作台 0.4.0 预览版的发布候选。开发交付时尚未推送本版；本地 Git 安装通过，不代表公开仓库已提供 0.4.0。发布者须在完成发布后补充实际提交、CI、安装及下载校验记录。
 
-使用交付的 `tavern-narrative-workbench` 文件夹，或解压同名发布 ZIP。**上传文件夹里面的内容，而不是把整个文件夹套在仓库根目录下。**
+## 发布目标
 
-仓库首页应直接呈现：
+- 更新现有仓库：<https://github.com/hc568871650-commits/tavern-narrative-workbench>
+- 默认分支：`main`。建议标签：`v0.4.0`。Release 标题：`叙事工作台 v0.4.0 预览版`。
+- Release 勾选 **This is a pre-release**，不宣传为正式稳定版。
+- 无需新建仓库、GitHub Pages、npm 发布或前端构建。
+- 已有数据库依赖：<https://github.com/AlbusKen/shujuku>，单独安装，不随本包分发。
 
-```text
-manifest.json
-index.js
-core.js
-host.js
-actions.js
-dock.js
-style.css
-dock.css
-examples/
-tests/
-scripts/
-package.json
-compatibility.json
-README.md
-RELEASING.md
-INSTALL-VERIFICATION.md
-.gitignore
-```
+## 源码放置
 
-无需上传整个开发工作区。不要上传 `work/`、`node_modules/`、酒馆 `data/`、聊天备份、浏览器截图、配置密钥或数据库上游源码。当前交付包已经独立整理好。
+将发布 ZIP 解压后的**内容**放进仓库根目录，首页直接看到 `manifest.json`、`index.js` 和 `style.css`。不要套一层版本文件夹，也不要只把 ZIP 上传到 Release。
 
-## 2. 建仓库并上传
+完整保留 JavaScript/CSS 模块、`examples/`、`tests/`、`scripts/`、文档、`.github/workflows/check.yml`、`.gitattributes`、`.gitignore`。隐藏文件也要提交。不要上传本地测试服务器、`work/`、`node_modules/`、聊天数据、密钥或测试头像。
 
-本项目公开仓库：https://github.com/hc568871650-commits/tavern-narrative-workbench 。后续更新提交到该仓库的 `main` 分支。普通安装链接不含私有仓库登录凭据；要让他人直接安装，公开仓库最方便。
+本包已使用真实仓库地址。维持现有署名和许可证状态，不把上游数据库代码合并进来。
 
-GitHub 网页操作：
+## 发布步骤
 
-1. 新建仓库；若选择了自动生成 README，上传时用本包 README 替换。
-2. 选择 **Add file → Upload files**，上传解压目录中的所有文件与子目录，提交到默认分支。
-3. 仓库首页确认能直接打开 `manifest.json`，并且 `index.js`、`style.css`、`dock.css` 和 `examples/` 都存在。
-4. 将 README 中 `https://github.com/hc568871650-commits/tavern-narrative-workbench` 替换成真实仓库首页地址。
-5. 按实际作者信息修改 `manifest.json` 的 `author`（当前为项目中性名称），可补充 `homePage` 为真实仓库地址。若要授予开源使用许可，由发布者选择合适许可证并添加 `LICENSE`；不要给上游依赖代签许可。
+1. 在干净检出中读取远程最新 `main`。确认没有其他人尚未合并的改动；将本包内容整合进根目录，不覆盖无关成果。
+2. 检查 `manifest.json`、`package.json` 与 `compatibility.json` 的版本均为 `0.4.0`。在仓库根目录运行：
+   ```sh
+   npm test
+   npm run check-package
+   git diff --check
+   ```
+   当前预期为 118 项测试通过。没有 npm 运行时依赖，不需要先构建。
+3. 检查变更，提交到 `main` 并等待 GitHub Actions 的 `Package checks` 完成。发布记录写入最终 commit SHA 与对应 CI 链接。
+4. 用隔离酒馆依次从两个真实 GitHub 链接安装；确认显示 0.4.0，且新增图片模块/样式能加载。测试时避免同名全局扩展遮住用户目录的新安装。
+5. 在另一个测试副本中，从原有 0.3.1 使用酒馆「管理扩展 → 更新」升级到 0.4.0，确认原聊天、适配配置仍可读取。**无变化更新测试不能代替旧版本升级测试。**
+6. 按 [验收记录](INSTALL-VERIFICATION.md) 补验尚未完成的界面项目，并记录结果。无法完成的项目保留为预览限制，不写成通过。
+7. 为最终发布提交创建 `v0.4.0` 标签，发布 GitHub prerelease。若同名标签已存在，先核对，不覆盖已有标签。发布正文可使用 [RELEASE-NOTES.md](RELEASE-NOTES.md)。
+8. 从标签对应源码生成安装 ZIP，根部直接含 manifest；随附 `SHA256SUMS.txt`。如发布方改过任何文件，重新打包并计算哈希，不能沿用交接包哈希。
+9. 匿名下载 Release ZIP，核对 SHA-256；检查源码 ZIP 中入口位置。把提交、CI、Release、下载哈希与安装结果回传给对接人。
 
-ZIP 仅方便下载和上传前整理。**只把 ZIP 放进 GitHub Release、而不把源码文件提交到仓库根目录，不能通过酒馆 Git 链接安装。** 不需要 GitHub Pages、npm 发布或构建服务。
+README 中“本地预览交付、尚未提交”等状态文字，只有在实际上线并核验后才能更新；改文档产生的新提交也应成为最终检查和标签的目标。
 
-## 3. 发给使用者的安装说明
+## 安装与更新说明
 
-下方使用本项目实际仓库链接，可复制给使用者：
+发布后可向用户发送：
 
-> 这是 SillyTavern 前端扩展，需先有能安装第三方扩展的酒馆。打开「扩展 → 安装扩展」，先装数据库 `https://github.com/AlbusKen/shujuku`，刷新后再装工作台 `https://github.com/hc568871650-commits/tavern-narrative-workbench`。再次刷新，进入角色卡聊天，在工作台配置表格映射即可使用。物品动作只加入输入草稿，不自动发送。手机使用同一酒馆实例即可；本包不是 APK。
+> 酒馆「扩展 → 安装扩展」先输入数据库链接 `https://github.com/AlbusKen/shujuku`，安装后刷新；再输入工作台链接 `https://github.com/hc568871650-commits/tavern-narrative-workbench`，再次刷新。已安装工作台的用户可在扩展管理中检查更新。进入世界卡聊天并完成表格适配后，可用「人物图片」给 NPC 绑定立绘。动作仍只加入输入草稿，不自动发送或扣物品。当前是预览版，手机真机等兼容范围见验收说明。
 
-数据库和工作台是两个仓库，需要分别安装。工作台清单中的依赖声明只用于检查，不能自动下载数据库。
+粘贴仓库首页 URL，不使用 README、`tree/main`、`raw` 或 Release 下载链接。依赖声明不会自动下载数据库。本包是前端扩展，不是 APK；手机需要访问支持第三方扩展的酒馆实例。
 
-## 4. 发布后自检
+## 数据与回退
 
-1. 在测试酒馆粘贴真实 GitHub 仓库链接完成安装，确认扩展列表显示 0.3.1。
-2. 刷新后确认工作台与数据库都启用，依次打开入口、卡片适配和数据库编辑器。
-3. 在空白测试聊天载入「操作栏样例」，应用并初始化样例表；查看背包，尝试把动作加入已有草稿，确认原文保留且未自动发送。
-4. 手机竖屏、横屏各检查一次，再打开软键盘检查输入区和弹层。不把桌面模拟测试视为手机验收。
-5. 如果安装报缺少 manifest，先检查是否把文件放到了多余子目录；如果数据库未就绪，检查依赖是否启用并刷新。
+图片配置保存于角色卡扩展元数据，图片文件保存于酒馆用户图片目录；聊天适配与业务状态仍分别由聊天、数据库保存。同卡图片共享不等于多个聊天的剧情状态共享。
 
-本地镜像安装验证不能证明 GitHub 仓库可访问。本版本真实公开链接安装已通过，详见 INSTALL-VERIFICATION.md；首次样例初始化与手机真机等未完成项目仍需单独验收。
-
-## 5. 后续更新
-
-修改后运行 `npm test` 与 `npm run check-package`，同步 `manifest.json`、`package.json` 和 `compatibility.json` 的版本号，再提交到同一默认分支。使用者在酒馆扩展管理里更新并刷新。
-
-可以为正式版本创建 `v0.3.1` 等标签和 GitHub Release，方便标记与下载；链接安装仍用仓库首页。不要随意更改仓库名或默认分支，以免影响已有安装。
-
-如需回退代码，可在仓库默认分支提交一次撤销更新，让已安装用户更新后获取修复版本。数据备份和恢复使用酒馆/数据库原生功能，不用代码回退冒充存档回退。
+更新前用酒馆/数据库导出重要存档；已有图片资料另用「导出含图资源包」。若有界面故障，可先停用工作台并刷新。代码回退使用撤销提交或已验证旧版本，保留新增数据和图片，不自动清除。代码回退不能撤销已写入的存档变化。

@@ -1,6 +1,7 @@
 import { KEY, parseConfig, validateConfig, readView, canonical, contextToken } from './core.js';
 import { verifyHostSave } from './host.js';
 import { createDock } from './dock.js';
+import { initializeSample } from './initialization.js';
 
 const context = () => window.SillyTavern.getContext();
 const api = () => window.AutoCardUpdaterAPI;
@@ -9,7 +10,7 @@ const format = value => value === undefined || value === null ? '—' : String(v
 let panel, body, status, select, editor, notice, branchButton;
 let epoch = 0, selected = null, view = null, bound = null, editScope = '', refreshTimer;
 let initializingRetries = 0;
-let dock;
+let dock, initializeButton;
 const scope = () => canonical([context().characterId, context().groupId, context().chatId]);
 function message(text) { notice.textContent = text; }
 function invalidate(label = '状态待核对') { epoch++; view = null; body.replaceChildren(); branchButton.disabled = true; status.textContent = label; dock?.clear(); }
@@ -111,46 +112,42 @@ async function applyConfig() {
     message('配置已应用，并已从宿主聊天文件回读核对。');
     await refresh();
 }
+async function confirmAction(text) {
+    const ctx=context();
+    if(typeof ctx.callGenericPopup!=='function')throw new Error('宿主缺少异步确认窗口，请更新兼容的酒馆版本');
+    return await ctx.callGenericPopup(el('p',text),ctx.POPUP_TYPE.CONFIRM)===ctx.POPUP_RESULT.AFFIRMATIVE;
+}
 async function initializeExample() {
-    const cfg = config(), names = { 'academy-visitor-demo': 'academy', 'starship-resource-demo': 'starship', 'journey-ui-demo':'journey' };
-    const name = cfg && names[cfg.id];
-    if (!name) throw new Error('先载入并应用一套样例配置。自定义卡请使用数据库编辑器设置其表结构。');
-    const ctx = context(), token = contextToken(ctx);
-    const empty = () => ctx.chat.length === 1 && !ctx.chat[0].is_user
-        && !ctx.chat.some(m => Object.values(m.TavernDB_ACU_IsolatedData || {}).some(s => s?.storageFrame))
-        && !Object.values(api()?.exportTableAsJson() || {}).some(s => s?.content?.length > 1);
-    if (!empty()) throw new Error('只允许在一条开场消息、无已存表格数据的新聊天初始化；已有存档请在数据库编辑器中管理。');
-    if (typeof api()?.importTemplateFromData !== 'function') throw new Error('底座尚未就绪');
-    if (!window.confirm('为本空白聊天建立所选样例的数据库表和初值？仅用于演示，不改全局模板，不调用模型。')) return;
-    const response = await fetch(new URL(`examples/${name}.tables.json`, import.meta.url));
-    if (!response.ok) throw new Error('样例表格文件读取失败');
-    const tables = await response.json();
-    if (contextToken(context()) !== token || !empty()) throw new Error('准备期间聊天或数据已变化，未执行初始化');
-    const result = await api().importTemplateFromData(tables, { scope: 'chat', dataMode: 'replace', presetName: cfg.name });
-    if (!result?.success || result.runtimeReady === false) throw new Error(result?.message || '底座未确认初始化成功');
-    if (scope() !== canonical([ctx.characterId, ctx.groupId, ctx.chatId])) throw new Error('初始化期间聊天已切换，请回原聊天核对；不继续写入');
-    // Template success alone can leave no formal full checkpoint on a new chat.
-    // Commit the backend's normalized current data through its own persistence API.
-    const initialData=structuredClone(api().exportTableAsJson());
-    for(const [key,sheet] of Object.entries(initialData))if(key.startsWith('sheet_')){
-        const supplied=Object.values(tables).filter(t=>t?.name===sheet.name && t?.content);
-        if(supplied.length!==1)throw new Error('样例表结构匹配不唯一，未提交初值');
-        sheet.content=structuredClone(supplied[0].content);delete sheet.seedRows;
-    }
-    if(await api().importTableAsJson(JSON.stringify(initialData))!==true)throw new Error('模板已建立，但初值持久化失败，请在数据库编辑器中检查后重试');
-    await verifyHostSave(context);
-    message('样例表结构和初值已交由数据库创建。可用数据库编辑器修改；规则诊断与历史只读。');
-    await refresh();
+    const cfg=config(),names={'academy-visitor-demo':'academy','starship-resource-demo':'starship','journey-ui-demo':'journey'};
+    const name=cfg&&names[cfg.id];
+    if(!name)throw new Error('先载入并应用一套样例配置。自定义卡请使用数据库编辑器设置其表结构。');
+    if(initializeButton.disabled)return;
+    const token=contextToken(context()),owner=scope();initializeButton.disabled=true;
+    try{
+        message('正在读取样例表结构…');
+        const response=await fetch(new URL(`examples/${name}.tables.json`,import.meta.url));
+        if(!response.ok)throw new Error('样例表格文件读取失败');
+        const tables=await response.json();
+        if(contextToken(context())!==token||scope()!==owner||canonical(config())!==canonical(cfg))throw new Error('读取样例期间聊天已变化，未执行初始化');
+        const result=await initializeSample({getContext:context,getApi:api,tables,
+            confirm:()=>confirmAction('为本空白聊天建立样例表结构和初值？只作用于当前聊天，不改全局模板，不调用模型。'),
+            onPhase:({message:text})=>{if(scope()===owner)message(text);},verifySave:()=>verifyHostSave(context)});
+        if(result.status==='complete'&&scope()===owner)await refresh();
+    }catch(error){
+        if(scope()===owner)message(`${error.message}${error.mayHaveWritten?' · 可能已写入部分内容，请检查原聊天后再决定下一步。':''}`);
+        else message(`已切换聊天。${error.mayHaveWritten?'原聊天可能有部分写入，请返回核对。':'初始化已停止。'}`);
+    }finally{initializeButton.disabled=false;}
 }
 async function branch() {
     if (!view || !view.persisted || context().groupId) throw new Error('当前不满足单角色聊天分支条件');
     if (contextToken(context()) !== view.token) throw new Error('状态已变化，请刷新后再创建分支');
-    const cfg = config(), target = view.index, expected = canonical(view.data);
-    if (!window.confirm(`从第 ${target} 楼创建并打开新分支？覆盖范围仅为聊天正文、消息中的数据库帧与本聊天适配配置。世界书、外部记忆和其他插件状态不在恢复范围。原聊天保留。`)) return;
+    const cfg = config(), target = view.index, expected = canonical(view.data), originToken=view.token, originScope=scope();
+    const assertBranchOwner=()=>{if(scope()!==originScope||contextToken(context())!==originToken||canonical(config())!==canonical(cfg))throw new Error('准备分支期间聊天或状态已变化，请重新选择楼层');};
+    if (!await confirmAction(`从第 ${target} 楼创建并打开新分支？覆盖聊天正文、数据库消息帧与本聊天适配配置。世界书、外部记忆与人物图片设置不在历史恢复范围。原聊天保留。`)) return;
     const module = await import('/scripts/bookmarks.js');
-    if (contextToken(context()) !== view?.token) throw new Error('准备分支时状态已变化，请重试');
+    assertBranchOwner();
     await verifyHostSave(context);
-    if (contextToken(context()) !== view?.token) throw new Error('保存核对期间状态已变化，请重新读取');
+    assertBranchOwner();
     const name = await module.branchChat(target);
     if (!name) throw new Error('宿主没有返回新分支名称');
     selected = null;
@@ -164,13 +161,14 @@ async function branch() {
 function init() {
     if (document.getElementById('narrative-workbench')) return;
     panel = el('aside'); panel.id = 'narrative-workbench'; panel.hidden = true;
-    const header = el('header'); header.append(el('strong', '叙事工作台'), el('small', 'v0.3.1 · 单一状态来源'));
+    const header = el('header'); header.append(el('strong', '叙事工作台'), el('small', 'v0.4.0 · 预览版'));
     button('关闭', () => { panel.hidden = true; }, header); panel.append(header);
     status = el('p', '等待连接', 'nw-status'); panel.append(status);
     const controls = el('div', undefined, 'nw-controls');
     select = el('select'); select.id = 'nw-history'; select.setAttribute('aria-label', '查看楼层'); select.addEventListener('change', () => { selected = select.value === '' ? null : Number(select.value); refresh(); }); controls.append(select);
     button('刷新', refresh, controls);
     button('核对磁盘保存', async () => { const r = await verifyHostSave(context); message(`回读一致：${r.messageCount} 条正文/回复版本、数据库消息帧和适配配置。范围不含世界书或外部记忆。`); }, controls);
+    button('人物图片',()=>dock?.openPortraits(),controls);
     button('数据库编辑器', async () => { if (!api()?.openVisualizer || await api().openVisualizer() === false) throw new Error('数据库编辑器尚未就绪'); }, controls);
     branchButton = button('从此楼创建分支', branch, controls); branchButton.id = 'nw-branch'; branchButton.disabled = true;
     panel.append(controls);
@@ -187,7 +185,7 @@ function init() {
     actions.append(file); details.append(actions);
     editor = el('textarea'); editor.id = 'nw-editor'; editor.spellcheck = false; editor.setAttribute('aria-label', '适配配置 JSON'); details.append(editor);
     button('应用到本聊天', applyConfig, details);
-    button('为空白聊天建立样例表', initializeExample, details);
+    initializeButton=button('为空白聊天建立样例表', initializeExample, details);
     button('查看底座表名与列名', () => {
         const data = api()?.exportTableAsJson(); if (!data) throw new Error('底座未连接');
         const tables = Object.entries(data).filter(([k]) => k.startsWith('sheet_')).map(([key, s]) => ({ key, name: s.name, columns: s.content?.[0] }));

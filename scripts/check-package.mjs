@@ -13,7 +13,8 @@ assert.equal(manifest.version, compatibility.integrationVersion, 'compatibility 
 for (const key of ['display_name', 'author', 'js', 'css']) assert.ok(manifest[key], `Missing ${key}`);
 assert.deepEqual(manifest.dependencies, ['third-party/shujuku']);
 const files = [manifest.js, manifest.css, 'core.js', 'host.js', 'actions.js', 'dock.js', 'dock.css',
-    'README.md', 'RELEASING.md', 'INSTALL-VERIFICATION.md'];
+    'portraits.js', 'portrait-store.js', 'portrait-panel.js', 'portrait-panel.css', 'initialization.js',
+    'README.md', 'RELEASING.md', 'INSTALL-VERIFICATION.md', 'CHANGELOG.md', 'PLOTTI-RESEARCH.md'];
 for (const name of ['journey', 'academy', 'starship']) {
     for (const suffix of ['.json', '.tables.json']) {
         const file = `examples/${name}${suffix}`;
@@ -22,13 +23,13 @@ for (const name of ['journey', 'academy', 'starship']) {
 }
 for (const name of files) assert.ok(fs.statSync(path.join(root, name)).isFile(), `Missing ${name}`);
 // Check local module imports and stylesheet imports without executing browser code.
-for (const name of ['index.js', 'core.js', 'host.js', 'actions.js', 'dock.js', 'style.css', 'dock.css']) {
+for (const name of fs.readdirSync(root).filter(name => /\.(js|css)$/.test(name))) {
     const source = read(name);
     for (const match of source.matchAll(/(?:from\s*|@import\s*)['"](\.\/[^'"]+)['"]/g)) {
         assert.ok(fs.existsSync(path.resolve(root, match[1])), `Missing import ${match[1]}`);
     }
 }
-for (const file of ['README.md', 'RELEASING.md', 'INSTALL-VERIFICATION.md']) {
+for (const file of ['README.md', 'RELEASING.md', 'INSTALL-VERIFICATION.md', 'CHANGELOG.md', 'PLOTTI-RESEARCH.md']) {
     for (const match of read(file).matchAll(/\]\(([^)]+)\)/g)) {
         const target = match[1];
         if (/^(https?:|#)/.test(target)) continue;

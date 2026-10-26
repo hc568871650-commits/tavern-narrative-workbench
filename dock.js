@@ -1,12 +1,27 @@
 import { KEY, canonical, contextToken, committedState } from './core.js';
-import { buildCatalog, composeAction, appendDraft } from './actions.js';
+import { buildCatalog, composeAction, appendDraft, visibleChanges } from './actions.js';
+import { getProfile, emptyLibrary } from './portraits.js';
+import { createPortraitStore } from './portrait-store.js';
+import { createPortraitPanel } from './portrait-panel.js';
 
 const make = (tag,text,cls) => { const e=document.createElement(tag); if(text!==undefined)e.textContent=text; if(cls)e.className=cls; return e; };
 const icons = {items:'◇',people:'♙',tasks:'✓',places:'⌖',status:'◈'};
 export function createDock({getContext,getApi,openWorkbench,refresh}) {
     const host=document.getElementById('send_form'); if(!host)return {clear(){},update(){},setBusy(){}};
     let snapshot=null, cfg=null, catalog=[], active='', picked=null, busy=false, expanded=true;
-    let opener=null, pickerMode='items';
+    let opener=null, pickerMode='items', query='', focusedPerson='', focusScope='';
+    const portraitStore=createPortraitStore(getContext);
+    const people=()=>catalog.filter(g=>g.kind==='people').flatMap(g=>g.rows);
+    const manager=createPortraitPanel({getContext,getPeople:people,onChanged:()=>{renderSidebar();if(dialog.open){renderList();emptyDetail();}}});
+    function library(){try{return portraitStore.read();}catch{return emptyLibrary();}}
+    function portraitNode(person,compact=false){
+        const box=make('div',undefined,compact?'nw-avatar-thumb':'nw-character-mark');
+        const profile=person&&getProfile(library(),person.id);
+        const fallback=()=>{box.replaceChildren(make('span',person?.name.slice(0,1)||'◇'));if(!compact)box.append(make('small',person?'人物档案':'当前故事'));};
+        fallback();
+        if(profile?.portrait){const img=make('img');img.alt=`${person.name}的立绘`;img.loading='lazy';img.decoding='async';img.style.objectFit=profile.fit;img.style.objectPosition=`${profile.position.x}% ${profile.position.y}%`;img.addEventListener('error',()=>{fallback();box.title='图片未找到，可在人物图片中重新绑定';},{once:true});img.src=profile.portrait;box.replaceChildren(img);}
+        return box;
+    }
     const root=make('section',undefined,'nw-dock');root.id='nw-dock';root.setAttribute('aria-label','叙事操作栏');
     const bar=make('div',undefined,'nw-dock-bar');
     const brand=make('span','◇  场景工具','nw-dock-brand');bar.append(brand);
@@ -23,6 +38,8 @@ export function createDock({getContext,getApi,openWorkbench,refresh}) {
     const status=make('span','等待状态','nw-dock-badge');status.setAttribute('role','status');top.append(status);
     button('↻',refresh,top,'nw-dock-refresh').setAttribute('aria-label','刷新操作栏');
     content.append(top);
+    const search=make('input');search.type='search';search.placeholder='查找名称或说明';search.setAttribute('aria-label','搜索场景记录');search.className='nw-search';content.append(search);
+    search.addEventListener('input',()=>{query=search.value.trim().toLocaleLowerCase();emptyDetail();if(pickerMode==='options')renderOptions();else renderList();});
     const layout=make('div',undefined,'nw-dock-layout');const list=make('div',undefined,'nw-dock-list');const detail=make('div',undefined,'nw-dock-detail');layout.append(list,detail);content.append(layout);
     const note=make('div','选择只会生成草稿，物品是否消耗由实际剧情决定。','nw-dock-note');note.id='nw-dock-note';note.setAttribute('aria-live','polite');content.append(note);
     root.append(bar,content);
@@ -36,11 +53,11 @@ export function createDock({getContext,getApi,openWorkbench,refresh}) {
     for(const [label,kind] of [['☷ 选项','options'],['♙ 人物','people'],['◈ 状态','status'],['◇ 物品','items']])quickButtons.push(button(label,()=>openPicker(kind),shortcuts));
     const toast=make('span','','nw-play-toast');toast.setAttribute('aria-live','polite');shortcuts.append(toast);host.append(shortcuts);
     const header=make('header');header.id='nw-play-header';const scene=make('strong','叙事游玩');const playStatus=make('span','等待状态');playStatus.setAttribute('role','status');header.append(scene,playStatus);
-    const headTools=make('div');header.append(headTools);button('工作台',openWorkbench,headTools);const viewToggle=button('原生界面',()=>setTheme(!document.body.classList.contains('nw-player')),headTools);document.getElementById('sheld')?.prepend(header);
+    const headTools=make('div');header.append(headTools);button('人物图片',()=>manager.open(),headTools);button('工作台',openWorkbench,headTools);const viewToggle=button('原生界面',()=>setTheme(!document.body.classList.contains('nw-player')),headTools);document.getElementById('sheld')?.prepend(header);
     const sidebar=make('aside');sidebar.id='nw-play-sidebar';sidebar.setAttribute('aria-label','人物与任务');document.body.append(sidebar);
     function closePicker(){dialog.close();opener?.focus?.();}
     function openPicker(kind){
-        pickerMode=kind;
+        pickerMode=kind;query='';search.value='';search.hidden=kind==='status';
         opener=document.activeElement;const group=catalog.find(g=>g.kind===kind)||(kind==='options'?catalog.find(g=>g.kind!=='items'&&g.rows.some(i=>i.actions.length)):null)||catalog[0];
         if(group)active=group.id;picked=null;expanded=true;content.hidden=false;renderTabs();renderList();emptyDetail();if(kind==='options')renderOptions();if(kind==='status')renderStatus();dialog.showModal();closeButton.focus();
     }
@@ -62,13 +79,14 @@ export function createDock({getContext,getApi,openWorkbench,refresh}) {
         if(contextToken(ctx)!==snapshot.token || canonical(ctx.chatMetadata?.[KEY])!==canonical(cfg))throw new Error('聊天、回复或配置已经变化，请重新选择');
         if(committedState(getApi().exportTableAsJson())!==committedState(snapshot.data))throw new Error('物品状态已经变化，请刷新后重新选择');
     }
-    function renderTabs(){tabs.replaceChildren();for(const group of catalog){const b=button(`${icons[group.kind]} ${group.label} ${group.rows.length}`,()=>{pickerMode="entity";active=group.id;picked=null;renderTabs();renderList();emptyDetail();},tabs);b.setAttribute('role','tab');b.setAttribute('aria-selected',String(active===group.id));b.dataset.entity=group.id;} }
+    function renderTabs(){tabs.replaceChildren();for(const group of catalog){const b=button(`${icons[group.kind]} ${group.label} ${group.rows.length}`,()=>{pickerMode="entity";active=group.id;picked=null;query='';search.value='';search.hidden=false;renderTabs();renderList();emptyDetail();},tabs);b.setAttribute('role','tab');b.setAttribute('aria-selected',String(active===group.id));b.dataset.entity=group.id;} }
     function renderList() {
         list.replaceChildren();const group=catalog.find(g=>g.id===active);if(!group)return;
         title.textContent=group.label;subtitle.textContent=`${group.rows.length} 项记录 · ${cfg.name}`;
-        if(!group.rows.length)list.append(make('p','这里还没有可显示的记录。','nw-dock-placeholder'));
-        for(const item of group.rows){const card=button('',()=>showItem(item),list,'nw-item');card.dataset.item=item.id;card.setAttribute('aria-label',`选择 ${item.name}`);card.setAttribute('aria-pressed',String(picked===item.id));
-            card.append(make('span',icons[item.kind],'nw-item-icon'));const words=make('span',undefined,'nw-item-copy');words.append(make('strong',item.name),make('small',item.description || (item.fields[0] ? String(item.fields[0].value??'暂无说明') : '查看详情')));card.append(words);
+        const matching=group.rows.filter(item=>`${item.name} ${item.description}`.toLocaleLowerCase().includes(query));
+        if(!matching.length)list.append(make('p',query?'没有匹配记录，试试其他关键词。':'这里还没有可显示的记录。','nw-dock-placeholder'));
+        for(const item of matching){const card=button('',()=>showItem(item),list,'nw-item');card.dataset.item=item.id;card.setAttribute('aria-label',`选择 ${item.name}`);card.setAttribute('aria-pressed',String(picked===item.id));
+            card.append(item.kind==='people'?portraitNode(item,true):make('span',icons[item.kind],'nw-item-icon'));const words=make('span',undefined,'nw-item-copy');words.append(make('strong',item.name),make('small',item.description || (item.fields[0] ? String(item.fields[0].value??'暂无说明') : '查看详情')));card.append(words);
             if(item.quantity!==undefined)card.append(make('span',`×${item.quantity}`,'nw-item-count'));
         }
     }
@@ -81,6 +99,11 @@ export function createDock({getContext,getApi,openWorkbench,refresh}) {
             const target=[...list.querySelectorAll('button')].find(b=>b.getAttribute('aria-label')===focusLabel);target?.focus();target?.scrollIntoView({block:'nearest'});
         },detail,'nw-back-list');
         detail.append(make('h4',item.name));
+        if(item.kind==='people'){
+            focusedPerson=item.id;saveFocusedPerson();renderSidebar();detail.append(portraitNode(item));
+            const profile=getProfile(library(),item.id);if(profile?.note)detail.append(make('p',profile.note,'nw-public-note'));
+            button('设置此人物图片',()=>{closePicker();manager.open(item.id);},detail,'nw-portrait-edit');
+        }
         const fields=make('dl');for(const f of item.fields){fields.append(make('dt',f.label.split('/').at(-1)),make('dd',String(f.value??'—')+f.unit));}detail.append(fields);
         if(!item.actions.length){detail.append(make('p','此记录仅供查看。','nw-dock-placeholder'));return;}
         const buttons=make('div',undefined,'nw-action-buttons');const form=make('div',undefined,'nw-action-form');detail.append(buttons,form);
@@ -92,8 +115,9 @@ export function createDock({getContext,getApi,openWorkbench,refresh}) {
         title.textContent='可选行动';subtitle.textContent='选择一条意图，再补充细节。';tabs.replaceChildren();list.replaceChildren();
         const tab=button('可选行动',renderOptions,tabs);tab.setAttribute('role','tab');tab.setAttribute('aria-selected','true');
         let count=0;for(const group of catalog.filter(g=>g.kind!=='items'))for(const item of group.rows)for(const action of item.actions){
+            if(query&&!`${action.label} ${item.name} ${item.description}`.toLocaleLowerCase().includes(query))continue;
             count++;const row=button('',()=>{active=group.id;renderTabs();showItem(item,action.id);},list,'nw-item');row.setAttribute('aria-label',`${action.label} ${item.name}`);const words=make('span',undefined,'nw-item-copy');words.append(make('strong',`${action.label} · ${item.name}`),make('small',item.description||group.label));row.append(words);
-        }if(!count)list.append(make('p','此卡尚未配置可选行动，可直接在输入框自由输入。','nw-dock-placeholder'));
+        }if(!count)list.append(make('p',query?'没有匹配的行动。':'此卡尚未配置可选行动，可直接在输入框自由输入。','nw-dock-placeholder'));
     }
     function renderStatus(){
         title.textContent='状态一览';subtitle.textContent='查看已记录的信息。';tabs.replaceChildren();emptyDetail();say('这里只读显示资料；编辑和保存请前往工作台。');
@@ -131,17 +155,24 @@ export function createDock({getContext,getApi,openWorkbench,refresh}) {
         if(dialog.open)closePicker();
         if(historical){clear('历史只读');say('正在查看历史楼层。回到工作台“当前状态”后可准备行动。');return;}
         if(!view.persisted || view.current.issues.length){clear('状态待确认');say('当前状态或字段映射存在问题，请到工作台核对后再操作。');return;}
-        catalog=buildCatalog(cfg,view.current);if(!catalog.some(g=>g.id===active))active=(catalog.find(g=>g.kind==='items')||catalog[0])?.id;
+        catalog=buildCatalog(cfg,view.current);manager.refreshPeople?.();if(!catalog.some(g=>g.id===active))active=(catalog.find(g=>g.kind==='items')||catalog[0])?.id;
         status.textContent='当前状态';playStatus.textContent='当前状态';scene.textContent=getContext().name2||cfg.name;quickButtons.forEach(b=>b.disabled=false);renderTabs();renderList();emptyDetail();renderSidebar();say('选择只会生成草稿，物品是否消耗由实际剧情决定。');
     }
     function renderSidebar(){
         sidebar.replaceChildren();const top=make('div',undefined,'nw-side-top');top.append(make('strong','人物资料'));button('全部',()=>openPicker('people'),top);sidebar.append(top);
-        const person=catalog.filter(g=>g.kind==='people').flatMap(g=>g.rows)[0];
-        const portrait=make('div',undefined,'nw-character-mark');portrait.append(make('span',person?.name.slice(0,1)||'◇'),make('small',person?'人物档案':'当前故事'));sidebar.append(portrait);
+        const card=getContext().characters?.[getContext().characterId]?.avatar||'';
+        if(focusScope!==card){focusScope=card;focusedPerson='';try{focusedPerson=localStorage.getItem(`nw.person.${card}`)||'';}catch{}}
+        const available=people();const person=available.find(p=>p.id===focusedPerson)||available[0];
+        focusedPerson=person?.id||'';
+        if(available.length>1){const choose=make('select');choose.setAttribute('aria-label','侧栏人物');for(const p of available){const opt=make('option',p.name);opt.value=p.id;choose.append(opt);}choose.value=focusedPerson;choose.addEventListener('change',()=>{focusedPerson=choose.value;saveFocusedPerson();renderSidebar();});sidebar.append(choose);}
+        sidebar.append(portraitNode(person));
         const box=make('section',undefined,'nw-character-facts');box.append(make('h2',person?.name||getContext().name2||'尚未选择角色'));
-        if(person){for(const f of person.fields){const line=make('div');line.append(make('small',f.label.split('/').at(-1)),make('span',String(f.value??'—')+f.unit));box.append(line);}button('与其互动',()=>{openPicker('people');showItem(person);},box);}else box.append(make('p','此卡未配置人物资料。'));
+        if(person){const profile=getProfile(library(),person.id);if(profile?.note)box.append(make('p',profile.note,'nw-public-note'));for(const f of person.fields){const line=make('div');line.append(make('small',f.label.split('/').at(-1)),make('span',String(f.value??'—')+f.unit));box.append(line);}button('与其互动',()=>{openPicker('people');showItem(person);},box);button('设置图片',()=>manager.open(person.id),box,'nw-portrait-edit');}else box.append(make('p','此卡未配置人物资料。'));
         sidebar.append(box);
         const tasks=catalog.filter(g=>g.kind==='tasks').flatMap(g=>g.rows);if(tasks.length){sidebar.append(make('h3','当前任务'));for(const task of tasks.slice(0,3)){const b=button('',()=>{openPicker('tasks');showItem(task);},sidebar,'nw-side-task');b.append(make('strong',task.name),make('small',task.description));}}
+        const changes=visibleChanges(snapshot?.changes||[],catalog);
+        if(snapshot&&!snapshot.initial&&changes.length){const changeBox=make('section',undefined,'nw-recent-changes');changeBox.append(make('h3','相邻消息变化'));for(const change of changes.slice(0,4))changeBox.append(make('p',`${change.label}：${change.before??'—'} → ${change.after??'—'}`));if(changes.length>4)changeBox.append(make('small',`另有 ${changes.length-4} 项已记录变化`));sidebar.append(changeBox);}
     }
-    return {clear,update,setBusy(value){busy=value;if(value)clear();}};
+    function saveFocusedPerson(){try{localStorage.setItem(`nw.person.${getContext().characters?.[getContext().characterId]?.avatar||''}`,focusedPerson);}catch{}}
+    return {clear,update,openPortraits:()=>manager.open(),setBusy(value){busy=value;if(value)clear();}};
 }

@@ -1,0 +1,89 @@
+#nw-portrait-manager{width:min(920px,calc(100vw - 32px));max-width:calc(100vw - 32px);height:min(850px,calc(100dvh - 40px));max-height:calc(100dvh - 40px);padding:0;margin:auto;border:1px solid #71869b50;border-radius:18px;background:#171b22;color:#e7edf5;box-shadow:0 28px 100px #0008;color-scheme:dark;font:14px/1.55 system-ui,sans-serif;overflow:hidden;text-align:left;white-space:normal;text-shadow:none}
+#nw-portrait-manager:not([open]){display:none}
+#nw-portrait-manager[open]{display:flex;flex-direction:column}
+#nw-portrait-manager::backdrop{background:#070a10aa;backdrop-filter:blur(5px)}
+#nw-portrait-manager *{box-sizing:border-box;min-width:0}
+#nw-portrait-manager button,#nw-portrait-manager input,#nw-portrait-manager select,#nw-portrait-manager textarea{font:inherit;color:inherit}
+#nw-portrait-manager button{border:1px solid #74839645;background:#252c37;border-radius:9px;min-height:44px;padding:8px 12px;cursor:pointer;text-shadow:none;white-space:normal;overflow-wrap:anywhere;line-height:1.4}
+#nw-portrait-manager button:hover:not(:disabled){background:#303b4b;border-color:#a0cce177}
+#nw-portrait-manager button:disabled{opacity:.45;cursor:default}
+#nw-portrait-manager button:focus-visible,#nw-portrait-manager input:focus-visible,#nw-portrait-manager select:focus-visible,#nw-portrait-manager textarea:focus-visible{outline:2px solid #89cce5;outline-offset:2px}
+#nw-portrait-manager input:not([type=range]),#nw-portrait-manager select,#nw-portrait-manager textarea{width:100%;min-height:44px;border:1px solid #74839645;border-radius:8px;background:#10161f;padding:9px 11px;box-shadow:none}
+#nw-portrait-manager input[type=file]{font-size:12px;padding:8px}
+#nw-portrait-manager input[type=file]::file-selector-button{border:0;border-radius:5px;padding:5px 8px;background:#33445b;color:#e7edf5;margin-right:8px}
+#nw-portrait-manager input[type=range]{width:100%;min-height:44px;margin:0;accent-color:#9bd8ed}
+#nw-portrait-manager textarea{resize:vertical;min-height:90px;max-height:220px}
+#nw-portrait-manager [hidden]{display:none!important}
+#nw-portrait-manager .npm-header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 22px 8px;flex:0 0 auto}
+#nw-portrait-manager .npm-header small{font-size:11px;letter-spacing:.08em;color:#a4b9ca}
+#nw-portrait-manager .npm-title{font-size:19px;line-height:1.4;margin:4px 0 0;font-weight:600;overflow-wrap:anywhere}
+#nw-portrait-manager .npm-close{flex:0 0 auto}
+#nw-portrait-manager .npm-description{margin:0;padding:0 22px 12px;color:#aab7c7;font-size:12px;flex:0 0 auto}
+#nw-portrait-manager .npm-tools{display:flex;gap:8px;align-items:center;padding:0 22px 10px;flex:0 0 auto}
+#nw-portrait-manager .npm-tools input[type=search]{flex:1 1 auto;width:150px}
+#nw-portrait-manager .npm-tools button{flex:0 0 auto;font-size:12px}
+#nw-portrait-manager .npm-status{padding:10px 22px;margin:0;border-top:1px solid #ffffff0b;border-bottom:1px solid #ffffff0b;color:#a6d9c4;font-size:12px;flex:0 0 auto;overflow-wrap:anywhere}
+#nw-portrait-manager .npm-status[data-error=true]{color:#f3b4a2;background:#8f342219}
+#nw-portrait-manager .npm-guard{padding:10px 22px;border-bottom:1px solid #ffffff17;background:#69522725;flex:0 0 auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px}
+#nw-portrait-manager .npm-guard p{margin:0;flex:1 1 180px}
+#nw-portrait-manager .npm-danger{color:#f4c4ad}
+#nw-portrait-manager .npm-body{display:grid;grid-template-columns:minmax(180px,.65fr) minmax(0,1.6fr);gap:22px;padding:20px 22px;overflow:auto;overscroll-behavior:contain;flex:1 1 0;min-height:0;scrollbar-width:thin;align-items:start}
+#nw-portrait-manager .npm-roster{display:flex;flex-direction:column;gap:7px}
+#nw-portrait-manager .npm-person{display:flex;width:100%;align-items:center;gap:10px;text-align:left;padding:9px}
+#nw-portrait-manager .npm-person[aria-pressed=true]{background:#2a414d;border-color:#82c4d778}
+#nw-portrait-manager .npm-person-copy{display:flex;flex-direction:column;gap:3px;overflow:hidden}
+#nw-portrait-manager .npm-person-copy strong{font-size:13px;font-weight:500;overflow-wrap:anywhere}
+#nw-portrait-manager .npm-person-copy small{font-size:10px;color:#a3b6c5}
+#nw-portrait-manager .npm-avatar,#nw-portrait-manager .npm-preview{position:relative;display:grid;place-items:center;isolation:isolate;overflow:hidden;background:radial-gradient(ellipse at 30% 5%,#4b6474,#202833 70%);border:1px solid #b7d8ec22;border-radius:10px}
+#nw-portrait-manager .npm-avatar{height:44px;width:38px;flex:0 0 38px}
+#nw-portrait-manager .npm-avatar img,#nw-portrait-manager .npm-preview img{position:absolute;inset:0;width:100%;height:100%;background:#1a2029}
+#nw-portrait-manager .npm-initial{font-family:serif;font-size:26px;color:#c8dbe8}
+#nw-portrait-manager .npm-preview .npm-initial{font-size:76px;color:#d1e2ec}
+#nw-portrait-manager .npm-preview[data-failed=true]::after{content:'图片不可用';position:absolute;bottom:10px;font-size:11px;color:#edc4b5}
+#nw-portrait-manager .npm-editor h3{margin:0 0 12px;font-size:18px;font-weight:600;overflow-wrap:anywhere}
+#nw-portrait-manager .npm-preview-wrap{display:flex;justify-content:center;background:#0e131b;border-radius:13px;padding:12px;margin-bottom:18px}
+#nw-portrait-manager .npm-preview{width:min(100%,290px);height:280px;min-height:180px}
+#nw-portrait-manager .npm-fields{display:flex;flex-direction:column;gap:14px}
+#nw-portrait-manager .npm-fields label{display:flex;flex-direction:column;gap:6px;font-size:12px;color:#b7c8d5}
+#nw-portrait-manager .npm-hint{font-size:11px;color:#94a6b6;margin:0 0 8px;line-height:1.65}
+#nw-portrait-manager .npm-fields>.npm-hint{margin:-8px 0 0}
+#nw-portrait-manager .npm-sliders{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+#nw-portrait-manager .npm-sliders label{position:relative;padding-right:0}
+#nw-portrait-manager output{position:absolute;right:0;font-size:11px;color:#91b9cb}
+#nw-portrait-manager .npm-form-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+#nw-portrait-manager .npm-form-actions button{font-size:12px}
+#nw-portrait-manager .npm-primary{background:#294c60;border-color:#7bc3df70;color:#dbf3ff}
+#nw-portrait-manager .npm-binding{font-size:11px;color:#93a5b4}
+#nw-portrait-manager .npm-binding summary{cursor:pointer;padding:8px 0}
+#nw-portrait-manager .npm-binding code{display:block;overflow-wrap:anywhere;white-space:normal;margin:6px 0}
+#nw-portrait-manager .npm-import-list{padding-left:20px;font-size:12px;line-height:2;color:#c3d1de}
+#nw-portrait-manager .npm-empty{font-size:12px;color:#98aabb;line-height:1.8;margin:10px 0}
+@media(max-width:620px){
+ #nw-portrait-manager{width:calc(100vw - 16px);max-width:calc(100vw - 16px);height:calc(100dvh - 20px);max-height:calc(100dvh - 20px);border-radius:12px}
+ #nw-portrait-manager .npm-header{padding:12px 14px 7px;gap:10px}
+ #nw-portrait-manager .npm-title{font-size:16px}
+ #nw-portrait-manager .npm-description{padding:0 14px 9px;font-size:11px}
+ #nw-portrait-manager .npm-tools{padding:0 14px 8px;flex-wrap:wrap}
+ #nw-portrait-manager .npm-tools input[type=search]{flex-basis:100%;width:100%}
+ #nw-portrait-manager .npm-tools button{flex:1 1 110px;font-size:11px}
+ #nw-portrait-manager .npm-status{padding:8px 14px;font-size:11px}
+ #nw-portrait-manager .npm-guard{padding:8px 14px}
+ #nw-portrait-manager .npm-body{display:flex;flex-direction:column;padding:14px;gap:18px}
+ #nw-portrait-manager .npm-roster{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+ #nw-portrait-manager .npm-roster>.npm-empty{grid-column:1/-1}
+ #nw-portrait-manager .npm-person{gap:7px;padding:7px}
+ #nw-portrait-manager .npm-person-copy strong{font-size:12px}
+ #nw-portrait-manager .npm-person-copy small{font-size:9px}
+ #nw-portrait-manager .npm-avatar{height:40px;width:32px;flex-basis:32px}
+ #nw-portrait-manager .npm-editor{width:100%}
+ #nw-portrait-manager .npm-preview{height:230px;width:230px}
+ #nw-portrait-manager .npm-fields{gap:12px}
+ #nw-portrait-manager .npm-form-actions button{flex:1 1 110px}
+}
+@media(max-height:560px){
+ #nw-portrait-manager{height:calc(100dvh - 12px);max-height:calc(100dvh - 12px)}
+ #nw-portrait-manager .npm-description{display:none}
+ #nw-portrait-manager .npm-header{padding-top:8px}
+ #nw-portrait-manager .npm-header small{display:none}
+ #nw-portrait-manager .npm-preview{height:180px;min-height:120px}
+}
